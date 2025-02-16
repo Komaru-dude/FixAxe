@@ -11,6 +11,13 @@ public class FTrap : MonoBehaviour
     [SerializeField] private float acceleration = 5f;            // Ускорение падения
     [SerializeField] private float totalFallTime = 3f;           // Общее время падения
     [SerializeField] private float fadeDuration = 1f;            // Длительность затухания (в конце падения)
+    [SerializeField] public float randomMoveInterval = 1f;  // Интервал между сдвигами
+    [SerializeField] public float randomMoveDistance = 0.25f;  // Расстояние для движения в одну сторону
+    [SerializeField] public float randomMoveSpeed = 0.25f;     // Скорость движения
+
+    private Vector3 startPosition;   // Начальная позиция объекта
+    private Vector3 targetPosition;  // Целевая позиция объекта
+    private bool isMovingForward = true; // Флаг, указывающий на направление движения
 
     private bool activated = false;
     private float fallTimer = 0f;
@@ -31,6 +38,8 @@ public class FTrap : MonoBehaviour
         {
             Debug.LogError("SpriteRenderer не найден на объекте ловушки!");
         }
+        startPosition = transform.position;
+        targetPosition = startPosition + new Vector3(randomMoveDistance, 0, 0);
     }
 
     private void Update()
@@ -59,6 +68,10 @@ public class FTrap : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+        if (activated) return;  // Если объект активирован, движение не происходит
+
+        // Плавное движение объекта по времени
+        MoveBackAndForth();
     }
 
     // Метод активации ловушки
@@ -87,5 +100,40 @@ public class FTrap : MonoBehaviour
         {
             ActivateTrap();
         }
+    }
+    void MoveBackAndForth()
+    {
+        // Сдвигаем объект в сторону целевой позиции
+        if (isMovingForward)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, randomMoveSpeed * Time.deltaTime);
+
+            // Если объект достиг целевой позиции, меняем направление
+            if (transform.position == targetPosition)
+            {
+                isMovingForward = false;
+                // Задаем новую целевую позицию для обратного движения
+                targetPosition = startPosition;
+            }
+        }
+        else
+        {
+            // Сдвигаем объект обратно в исходную позицию
+            transform.position = Vector3.MoveTowards(transform.position, startPosition, randomMoveSpeed * Time.deltaTime);
+
+            // Если объект вернулся на начальную позицию, меняем направление
+            if (transform.position == startPosition)
+            {
+                isMovingForward = true;
+                // Задаем новую целевую позицию для движения вперед
+                targetPosition = startPosition + new Vector3(randomMoveDistance, 0, 0);
+            }
+        }
+    }
+
+    // Метод для активации/деактивации
+    public void ToggleActivation(bool activate)
+    {
+        activated = activate;
     }
 }
