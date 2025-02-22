@@ -18,6 +18,7 @@ Packages/*.lock
 *.suo
 *.user
 *.unityproj
+.vscode
 
 # Rider
 .idea/
