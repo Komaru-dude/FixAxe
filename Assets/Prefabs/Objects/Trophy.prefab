@@ -4800,7 +4800,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -5010,6 +5010,8 @@ MonoBehaviour:
   confettiParticles: {fileID: 951676280136153661}
   trophyCollider: {fileID: 8628829097470291464}
   levelManager: {fileID: 0}
+  LevelCanvas: {fileID: 0}
+  WinCanvas: {fileID: 0}
 --- !u!50 &149844756450791527
 Rigidbody2D:
   serializedVersion: 5
