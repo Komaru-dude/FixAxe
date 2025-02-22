@@ -12,12 +12,19 @@ public class LoopingBackground2D : MonoBehaviour
     void Start()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _material = _spriteRenderer.material; // Копируем материал
-        _initialOffset = _material.mainTextureOffset;
+        if (_spriteRenderer != null)
+        {
+            _material = _spriteRenderer.material; // Копируем материал
+            if (_material != null)
+                _initialOffset = _material.mainTextureOffset;
+        }
     }
 
     void Update()
     {
+        if (_material == null)
+            return;
+
         // Смещаем текстуру по вертикали
         float yOffset = Mathf.Repeat(Time.time * scrollSpeed, 1);
         _material.mainTextureOffset = new Vector2(0, yOffset);
@@ -25,6 +32,7 @@ public class LoopingBackground2D : MonoBehaviour
 
     void OnDisable()
     {
-        _material.mainTextureOffset = _initialOffset; // Сброс смещения
+        if (_material != null)
+            _material.mainTextureOffset = _initialOffset; // Сброс смещения
     }
 }

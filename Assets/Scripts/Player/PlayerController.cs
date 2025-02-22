@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
     [Header("Jump Settings")]
     [SerializeField] private int maxJumps = 2;
     [SerializeField] private float airJumpForce = 12f;
+    [SerializeField] private float wallJumpForce = 15f;           // Сила прыжка от стены
+    [SerializeField] private float wallJumpHorizontalForce = 10f;  // Горизонтальная сила прыжка от стены
 
     [Header("Respawn Settings")]
     [SerializeField] private float respawnDelay = 2f;
@@ -39,6 +41,12 @@ public class PlayerController : MonoBehaviour
     private bool isDead;
     private float verticalVelocity;
     private int currentJumps;
+    private bool isTouchingWall;  // Контакт со стеной
+    private bool isWallSliding;   // Скольжение по стене
+
+    // Дополнительные переменные для детальной проверки стен
+    private bool touchingLeftWall;
+    private bool touchingRightWall;
 
     public event Action OnJump;
     public event Action<bool> OnGroundedChanged;
@@ -70,6 +78,7 @@ public class PlayerController : MonoBehaviour
         {
             isMovingLeft = false;
             isMovingRight = false;
+            return;
         }
     }
 
@@ -80,16 +89,25 @@ public class PlayerController : MonoBehaviour
 
         HandleMovement();
         CheckGrounded();
+        CheckWallContact();
         UpdateVerticalVelocity();
         UpdateFacingDirection();
     }
 
     private void HandleMovement()
     {
-        // Вычисляем целевую скорость (-1, 0, 1) * moveSpeed
         targetSpeed = ((isMovingLeft ? -1f : 0f) + (isMovingRight ? 1f : 0f)) * moveSpeed;
 
-        // Ограничение по максимальной скорости
+        // Блокировка движения в сторону стены
+        if (isTouchingWall)
+        {
+            if ((touchingLeftWall && isMovingLeft) || (touchingRightWall && isMovingRight))
+            {
+                targetSpeed = 0;
+                rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            }
+        }
+
         if (Mathf.Abs(rb.linearVelocity.x) > maxHorizontalSpeed)
         {
             rb.linearVelocity = new Vector2(Mathf.Sign(rb.linearVelocity.x) * maxHorizontalSpeed, rb.linearVelocity.y);
@@ -99,22 +117,50 @@ public class PlayerController : MonoBehaviour
         speedDifference = targetSpeed - rb.linearVelocity.x;
         float accelRate = (Mathf.Abs(targetSpeed) > movementThreshold) ? acceleration : deceleration;
         float movement = Mathf.Pow(Mathf.Abs(speedDifference) * accelRate, velocityPower) * Mathf.Sign(speedDifference);
-        
+
         rb.AddForce(movement * Vector2.right);
     }
 
     private void CheckGrounded()
     {
-        // Вычисляем точку проверки: нижняя центральная точка коллайдера
         Vector2 rayOrigin = new Vector2(capsuleCollider.bounds.center.x, capsuleCollider.bounds.min.y);
         bool newGrounded = Physics2D.Raycast(rayOrigin, Vector2.down, groundCheckDistance, groundLayer);
-
         if (newGrounded != isGrounded)
         {
             isGrounded = newGrounded;
             if (isGrounded)
                 currentJumps = maxJumps;
             OnGroundedChanged?.Invoke(isGrounded);
+        }
+    }
+
+    private void CheckWallContact()
+    {
+        Vector2 originLeft = capsuleCollider.bounds.center - new Vector3(capsuleCollider.bounds.extents.x, 0);
+        Vector2 originRight = capsuleCollider.bounds.center + new Vector3(capsuleCollider.bounds.extents.x, 0);
+        float wallCheckDistance = 0.1f;
+
+        // Проверка трёх точек для левой стены
+        touchingLeftWall = Physics2D.Raycast(originLeft, Vector2.left, wallCheckDistance, groundLayer) ||
+                           Physics2D.Raycast(originLeft + Vector2.up * (capsuleCollider.bounds.extents.y - 0.1f), Vector2.left, wallCheckDistance, groundLayer) ||
+                           Physics2D.Raycast(originLeft - Vector2.up * (capsuleCollider.bounds.extents.y - 0.1f), Vector2.left, wallCheckDistance, groundLayer);
+
+        // Проверка трёх точек для правой стены
+        touchingRightWall = Physics2D.Raycast(originRight, Vector2.right, wallCheckDistance, groundLayer) ||
+                            Physics2D.Raycast(originRight + Vector2.up * (capsuleCollider.bounds.extents.y - 0.1f), Vector2.right, wallCheckDistance, groundLayer) ||
+                            Physics2D.Raycast(originRight - Vector2.up * (capsuleCollider.bounds.extents.y - 0.1f), Vector2.right, wallCheckDistance, groundLayer);
+
+        isTouchingWall = touchingLeftWall || touchingRightWall;
+
+        if (isTouchingWall && !isGrounded && rb.linearVelocity.y < 0)
+        {
+            isWallSliding = true;
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Clamp(rb.linearVelocity.y, -2f, float.MaxValue));
+            currentJumps = Mathf.Max(currentJumps, 1);
+        }
+        else
+        {
+            isWallSliding = false;
         }
     }
 
@@ -132,7 +178,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Mathf.Abs(rb.linearVelocity.x) < movementThreshold)
             return;
-        
+
         bool shouldFaceRight = rb.linearVelocity.x > 0;
         if (shouldFaceRight != facingRight)
             Flip();
@@ -150,14 +196,24 @@ public class PlayerController : MonoBehaviour
     {
         if ((isGrounded || currentJumps > 0) && !isDead)
         {
-            // Обнуляем вертикальную скорость для консистентности прыжка
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
             float force = isGrounded ? jumpForce : airJumpForce;
             rb.AddForce(Vector2.up * force, ForceMode2D.Impulse);
-            
-            currentJumps--;
+
+            currentJumps = Mathf.Max(currentJumps - 1, 0);
             OnJump?.Invoke();
         }
+    }
+
+    private void WallJump()
+    {
+        rb.linearVelocity = Vector2.zero;
+
+        // Определяем направление прыжка от стены
+        float direction = (isTouchingWall && touchingLeftWall) ? 1f : -1f;
+        rb.AddForce(new Vector2(direction * wallJumpHorizontalForce, wallJumpForce), ForceMode2D.Impulse);
+        currentJumps = Mathf.Max(currentJumps - 1, 0);
+        OnJump?.Invoke();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -181,14 +237,11 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 0;
         OnDeath?.Invoke();
-
         yield return new WaitForSeconds(deathAnimationDuration);
         spriteRenderer.enabled = false;
-
         float remainingDelay = respawnDelay - deathAnimationDuration;
         if (remainingDelay > 0)
             yield return new WaitForSeconds(remainingDelay);
-
         Respawn();
         enabled = true;
     }
@@ -204,6 +257,19 @@ public class PlayerController : MonoBehaviour
         OnRespawn?.Invoke();
     }
 
+    // Методы для управления кнопками UI
+    public void OnLeftButtonDown() => StartMovingLeft();
+    public void OnLeftButtonUp() => StopMovingLeft();
+    public void OnRightButtonDown() => StartMovingRight();
+    public void OnRightButtonUp() => StopMovingRight();
+    public void OnJumpButtonPressed()
+    {
+        if (isWallSliding)
+            WallJump();
+        else
+            Jump();
+    }
+
     public void StartMovingLeft() => isMovingLeft = true;
     public void StopMovingLeft() => isMovingLeft = false;
     public void StartMovingRight() => isMovingRight = true;
@@ -213,8 +279,13 @@ public class PlayerController : MonoBehaviour
     {
         if (!Application.isPlaying || capsuleCollider == null)
             return;
+
         Gizmos.color = Color.red;
         Vector2 rayOrigin = new Vector2(capsuleCollider.bounds.center.x, capsuleCollider.bounds.min.y);
         Gizmos.DrawLine(rayOrigin, rayOrigin + Vector2.down * groundCheckDistance);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.left * (capsuleCollider.bounds.extents.x + 0.1f));
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.right * (capsuleCollider.bounds.extents.x + 0.1f));
     }
 }
