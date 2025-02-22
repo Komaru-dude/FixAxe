@@ -86,7 +86,7 @@ public class TrophyController : MonoBehaviour
         }
 
         // Загрузка LevelSelector
-        Invoke(nameof(LoadWinCanvas), 5f); // Просто заменили yield на Invoke
+        Invoke(nameof(LoadWinCanvas), 1f); // Просто заменили yield на Invoke
         Debug.Log("[Trophy] Level selector load scheduled");
     }
 
