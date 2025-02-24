@@ -203,6 +203,8 @@ MonoBehaviour:
   maxHorizontalSpeed: 12
   maxJumps: 2
   airJumpForce: 7
+  wallJumpForce: 15
+  wallJumpHorizontalForce: 10
   respawnDelay: 2
   deathAnimationDuration: 0.5
   respawnPoint: {fileID: 0}

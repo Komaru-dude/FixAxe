@@ -196,8 +196,12 @@ public class PlayerController : MonoBehaviour
     {
         if ((isGrounded || currentJumps > 0) && !isDead)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+            // Ограничиваем максимальную вертикальную скорость перед прыжком
+            float maxVerticalSpeed = Mathf.Max(rb.linearVelocity.y, 0);
+
+            // Применяем силу прыжка, добавляя к текущей скорости
             float force = isGrounded ? jumpForce : airJumpForce;
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, maxVerticalSpeed);
             rb.AddForce(Vector2.up * force, ForceMode2D.Impulse);
 
             currentJumps = Mathf.Max(currentJumps - 1, 0);
