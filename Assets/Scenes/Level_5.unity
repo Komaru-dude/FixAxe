@@ -547,9 +547,9 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
---- !u!223 &247421785 stripped
-Canvas:
-  m_CorrespondingSourceObject: {fileID: 22323726, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
+--- !u!1 &247421785 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 177638, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
   m_PrefabInstance: {fileID: 247421784}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &552928631
