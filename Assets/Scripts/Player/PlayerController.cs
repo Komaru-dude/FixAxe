@@ -216,12 +216,6 @@ public class PlayerController : MonoBehaviour
         OnJump?.Invoke();
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Traps") && !isDead)
-            Die();
-    }
-
     public void Die()
     {
         if (isDead || !enabled)
