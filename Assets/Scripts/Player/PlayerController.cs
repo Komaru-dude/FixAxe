@@ -7,7 +7,6 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 8f;
-    [SerializeField] private float jumpForce = 15f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float groundCheckDistance = 0.1f;
     [SerializeField] private float acceleration = 25f;
@@ -18,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Jump Settings")]
     [SerializeField] private int maxJumps = 2;
-    [SerializeField] private float airJumpForce = 12f;
+    [SerializeField] private float jumpForce = 6f;
     [SerializeField] private float wallJumpForce = 15f;           // Сила прыжка от стены
     [SerializeField] private float wallJumpHorizontalForce = 10f;  // Горизонтальная сила прыжка от стены
 
@@ -194,15 +193,20 @@ public class PlayerController : MonoBehaviour
 
     public void Jump()
     {
+        if (isWallSliding)
+            WallJump();
+        else
+            AirJump();
+    }
+    public void AirJump()
+    {
         if ((isGrounded || currentJumps > 0) && !isDead)
         {
-            // Ограничиваем максимальную вертикальную скорость перед прыжком
-            float maxVerticalSpeed = Mathf.Max(rb.linearVelocity.y, 0);
-
-            // Применяем силу прыжка, добавляя к текущей скорости
-            float force = isGrounded ? jumpForce : airJumpForce;
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, maxVerticalSpeed);
-            rb.AddForce(Vector2.up * force, ForceMode2D.Impulse);
+            if (rb.linearVelocityY < 0)
+                rb.linearVelocity = new Vector2(rb.linearVelocityY, 0);
+            if (currentJumps < 2)
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y / 2);
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
             currentJumps = Mathf.Max(currentJumps - 1, 0);
             OnJump?.Invoke();
@@ -253,19 +257,6 @@ public class PlayerController : MonoBehaviour
         spriteRenderer.enabled = true;
         currentJumps = maxJumps;
         OnRespawn?.Invoke();
-    }
-
-    // Методы для управления кнопками UI
-    public void OnLeftButtonDown() => StartMovingLeft();
-    public void OnLeftButtonUp() => StopMovingLeft();
-    public void OnRightButtonDown() => StartMovingRight();
-    public void OnRightButtonUp() => StopMovingRight();
-    public void OnJumpButtonPressed()
-    {
-        if (isWallSliding)
-            WallJump();
-        else
-            Jump();
     }
 
     public void StartMovingLeft() => isMovingLeft = true;
