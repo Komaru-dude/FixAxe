@@ -62,8 +62,8 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
-  m_SortingOrder: 5
+  m_SortingLayerID: -1209564367
+  m_SortingOrder: 65
   m_TargetDisplay: 0
 --- !u!114 &2251165723202597761
 MonoBehaviour:
