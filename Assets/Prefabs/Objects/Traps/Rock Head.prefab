@@ -127,10 +127,10 @@ MonoBehaviour:
   animator: {fileID: 6634081183319210132}
   acceleration: 1
   maxSpeed: 10
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  selectedActions: 
+  levelTilemap: {fileID: 0}
+  SecondBeforeAction: 1
+  BlinkDuringIdle: 1
+  selectedActions: 0000000003000000
   rotationDirection: 0
 --- !u!61 &7563392991312550088
 BoxCollider2D:
