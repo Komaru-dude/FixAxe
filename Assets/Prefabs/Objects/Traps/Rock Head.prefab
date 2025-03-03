@@ -130,8 +130,10 @@ MonoBehaviour:
   levelTilemap: {fileID: 0}
   SecondBeforeAction: 1
   BlinkDuringIdle: 1
-  selectedActions: 0000000003000000
-  rotationDirection: 0
+  selectedActions: 0300000000000000
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!61 &7563392991312550088
 BoxCollider2D:
   m_ObjectHideFlags: 0
