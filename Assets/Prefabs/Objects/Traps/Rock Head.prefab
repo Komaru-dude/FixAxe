@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 6634081183319210132}
   - component: {fileID: 345560060041162650}
   - component: {fileID: 7563392991312550088}
-  m_Layer: 0
+  - component: {fileID: 2126736098840905379}
+  m_Layer: 3
   m_Name: Rock Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,16 +125,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08d0d0023aad57048a4caa1c9af0dfd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 6634081183319210132}
-  acceleration: 1
+  acceleration: 5
   maxSpeed: 10
   levelTilemap: {fileID: 0}
-  SecondBeforeAction: 1
-  BlinkDuringIdle: 1
+  SecondBeforeAction: 0.3
   selectedActions: 0300000000000000
   layerMask:
     serializedVersion: 2
     m_Bits: 8
+  direction: {x: 0, y: 1}
+  distance: 0
 --- !u!61 &7563392991312550088
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -180,3 +181,30 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.9995518, y: 1.9989319}
   m_EdgeRadius: 0
+--- !u!50 &2126736098840905379
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5593527708654344756}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

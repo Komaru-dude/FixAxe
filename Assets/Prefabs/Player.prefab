@@ -191,7 +191,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 10
-  jumpForce: 7
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -202,9 +201,9 @@ MonoBehaviour:
   movementThreshold: 0.3
   maxHorizontalSpeed: 12
   maxJumps: 2
-  airJumpForce: 7
-  wallJumpForce: 15
-  wallJumpHorizontalForce: 10
+  jumpForce: 7
+  wallJumpForce: 7
+  wallJumpHorizontalForce: 0
   respawnDelay: 2
   deathAnimationDuration: 0.5
   respawnPoint: {fileID: 0}
