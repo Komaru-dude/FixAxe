@@ -129,5 +129,7 @@ public class RockHead : MonoBehaviour
 
             yield return null;
         }
+        // Фиксируем точное положение после завершения движения
+        rb.MovePosition(targetPosition);
     }
 }
