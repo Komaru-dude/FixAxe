@@ -410,6 +410,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1000862721}
     m_Modifications:
+    - target: {fileID: 2756332555355943988, guid: f60687562e661f84582a332c4eee47c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 359328456}
     - target: {fileID: 6025717836956912331, guid: f60687562e661f84582a332c4eee47c8, type: 3}
       propertyPath: m_Name
       value: Spike (4)
@@ -769,6 +773,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1000862721}
     m_Modifications:
+    - target: {fileID: 2756332555355943988, guid: f60687562e661f84582a332c4eee47c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 359328456}
     - target: {fileID: 6025717836956912331, guid: f60687562e661f84582a332c4eee47c8, type: 3}
       propertyPath: m_Name
       value: Spike (2)
@@ -871,6 +879,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1000862721}
     m_Modifications:
+    - target: {fileID: 2756332555355943988, guid: f60687562e661f84582a332c4eee47c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 359328456}
     - target: {fileID: 6025717836956912331, guid: f60687562e661f84582a332c4eee47c8, type: 3}
       propertyPath: m_Name
       value: Spike (1)
@@ -4138,6 +4150,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1000862721}
     m_Modifications:
+    - target: {fileID: 2756332555355943988, guid: f60687562e661f84582a332c4eee47c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 359328456}
     - target: {fileID: 6025717836956912331, guid: f60687562e661f84582a332c4eee47c8, type: 3}
       propertyPath: m_Name
       value: Spike (3)
@@ -4262,6 +4278,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1000862721}
     m_Modifications:
+    - target: {fileID: 2756332555355943988, guid: f60687562e661f84582a332c4eee47c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 359328456}
     - target: {fileID: 6025717836956912331, guid: f60687562e661f84582a332c4eee47c8, type: 3}
       propertyPath: m_Name
       value: Spike
