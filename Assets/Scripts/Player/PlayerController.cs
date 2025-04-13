@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(CapsuleCollider2D), typeof(SpriteRenderer))]
+[RequireComponent(typeof(Rigidbody2D), typeof(PolygonCollider2D), typeof(SpriteRenderer))]
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool facingRight = true;
 
     private Rigidbody2D rb;
-    private CapsuleCollider2D capsuleCollider;
+    private PolygonCollider2D polyCollider;
     private SpriteRenderer spriteRenderer;
     private float targetSpeed;
     private float speedDifference;
@@ -40,10 +40,9 @@ public class PlayerController : MonoBehaviour
     private bool isDead;
     private float verticalVelocity;
     private int currentJumps;
-    private bool isTouchingWall;  // Контакт со стеной
-    private bool isWallSliding;   // Скольжение по стене
+    private bool isTouchingWall;
+    private bool isWallSliding;
 
-    // Дополнительные переменные для детальной проверки стен
     private bool touchingLeftWall;
     private bool touchingRightWall;
 
@@ -61,7 +60,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        capsuleCollider = GetComponent<CapsuleCollider2D>();
+        polyCollider = GetComponent<PolygonCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
@@ -122,7 +121,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGrounded()
     {
-        Vector2 rayOrigin = new Vector2(capsuleCollider.bounds.center.x, capsuleCollider.bounds.min.y);
+        Vector2 rayOrigin = new Vector2(polyCollider.bounds.center.x, polyCollider.bounds.min.y);
         bool newGrounded = Physics2D.Raycast(rayOrigin, Vector2.down, groundCheckDistance, groundLayer);
         if (newGrounded != isGrounded)
         {
@@ -135,19 +134,19 @@ public class PlayerController : MonoBehaviour
 
     private void CheckWallContact()
     {
-        Vector2 originLeft = capsuleCollider.bounds.center - new Vector3(capsuleCollider.bounds.extents.x, 0);
-        Vector2 originRight = capsuleCollider.bounds.center + new Vector3(capsuleCollider.bounds.extents.x, 0);
+        Vector2 originLeft = polyCollider.bounds.center - new Vector3(polyCollider.bounds.extents.x, 0);
+        Vector2 originRight = polyCollider.bounds.center + new Vector3(polyCollider.bounds.extents.x, 0);
         float wallCheckDistance = 0.1f;
 
         // Проверка трёх точек для левой стены
         touchingLeftWall = Physics2D.Raycast(originLeft, Vector2.left, wallCheckDistance, groundLayer) ||
-                           Physics2D.Raycast(originLeft + Vector2.up * (capsuleCollider.bounds.extents.y - 0.1f), Vector2.left, wallCheckDistance, groundLayer) ||
-                           Physics2D.Raycast(originLeft - Vector2.up * (capsuleCollider.bounds.extents.y - 0.1f), Vector2.left, wallCheckDistance, groundLayer);
+                           Physics2D.Raycast(originLeft + Vector2.up * (polyCollider.bounds.extents.y - 0.1f), Vector2.left, wallCheckDistance, groundLayer) ||
+                           Physics2D.Raycast(originLeft - Vector2.up * (polyCollider.bounds.extents.y - 0.1f), Vector2.left, wallCheckDistance, groundLayer);
 
         // Проверка трёх точек для правой стены
         touchingRightWall = Physics2D.Raycast(originRight, Vector2.right, wallCheckDistance, groundLayer) ||
-                            Physics2D.Raycast(originRight + Vector2.up * (capsuleCollider.bounds.extents.y - 0.1f), Vector2.right, wallCheckDistance, groundLayer) ||
-                            Physics2D.Raycast(originRight - Vector2.up * (capsuleCollider.bounds.extents.y - 0.1f), Vector2.right, wallCheckDistance, groundLayer);
+                            Physics2D.Raycast(originRight + Vector2.up * (polyCollider.bounds.extents.y - 0.1f), Vector2.right, wallCheckDistance, groundLayer) ||
+                            Physics2D.Raycast(originRight - Vector2.up * (polyCollider.bounds.extents.y - 0.1f), Vector2.right, wallCheckDistance, groundLayer);
 
         isTouchingWall = touchingLeftWall || touchingRightWall;
 
@@ -235,7 +234,7 @@ public class PlayerController : MonoBehaviour
     {
         isDead = true;
         enabled = false;
-        capsuleCollider.enabled = false;
+        polyCollider.enabled = false;
         rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 0;
         OnDeath?.Invoke();
@@ -252,7 +251,7 @@ public class PlayerController : MonoBehaviour
     {
         transform.position = respawnPoint.position;
         rb.gravityScale = 1;
-        capsuleCollider.enabled = true;
+        polyCollider.enabled = true;
         isDead = false;
         spriteRenderer.enabled = true;
         currentJumps = maxJumps;
@@ -266,15 +265,15 @@ public class PlayerController : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (!Application.isPlaying || capsuleCollider == null)
+        if (!Application.isPlaying || polyCollider == null)
             return;
 
         Gizmos.color = Color.red;
-        Vector2 rayOrigin = new Vector2(capsuleCollider.bounds.center.x, capsuleCollider.bounds.min.y);
+        Vector2 rayOrigin = new Vector2(polyCollider.bounds.center.x, polyCollider.bounds.min.y);
         Gizmos.DrawLine(rayOrigin, rayOrigin + Vector2.down * groundCheckDistance);
 
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.left * (capsuleCollider.bounds.extents.x + 0.1f));
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.right * (capsuleCollider.bounds.extents.x + 0.1f));
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.left * (polyCollider.bounds.extents.x + 0.1f));
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.right * (polyCollider.bounds.extents.x + 0.1f));
     }
 }
