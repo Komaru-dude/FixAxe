@@ -7,9 +7,22 @@ public class FPSManager : MonoBehaviour
         ApplyFpsSettings();
     }
 
-    private void ApplyFpsSettings()
+    public static void ApplyFpsSettings()
     {
+        // Получаем частоту экрана в Гц
+        int maxRefreshRate = Mathf.RoundToInt((float)Screen.currentResolution.refreshRateRatio.value);
+
+        // Читаем настройку
         bool highFpsEnabled = PlayerPrefs.GetInt("HighFpsEnabled", 0) == 1;
-        Application.targetFrameRate = highFpsEnabled ? 120 : 60; // 120 FPS или 60 FPS
+
+        if (highFpsEnabled)
+        {
+            // Ставим максимум, который поддерживает экран
+            Application.targetFrameRate = maxRefreshRate;
+        }
+        else
+        {
+            Application.targetFrameRate = 60;
+        }
     }
 }
