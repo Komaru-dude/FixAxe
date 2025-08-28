@@ -34,3 +34,6 @@ Desktop.ini
 # Gradle/Android
 .gradle/
 .utmp/
+
+# TMP
+Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
