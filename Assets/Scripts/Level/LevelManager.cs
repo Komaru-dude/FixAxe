@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -19,18 +18,5 @@ public class LevelManager : MonoBehaviour
         }
 
         PlayerPrefs.Save();
-    }
-
-    // Для перехода в меню выбора уровней
-    public void LoadLevelSelector()
-    {
-        SceneManager.LoadScene("LevelSelector");
-    }
-
-    // Для перехода к следующему уровню
-    public void LoadNextLevel()
-    {
-        int nextLevel = currentLevelNumber + 1;
-        SceneManager.LoadScene($"Level_{nextLevel}");
     }
 }

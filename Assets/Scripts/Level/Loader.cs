@@ -4,23 +4,30 @@ using System.Text.RegularExpressions;
 
 public class SceneLoader : MonoBehaviour
 {
+    // Загрузка любой сцены
     public void LoadScene(string sceneName)
-    {   
-        // Загружаем сцену
+    {
         SceneManager.LoadScene(sceneName);
     }
 
+    // Для перехода в меню выбора уровней
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    // Для перехода к следующему уровню
     public void LoadNextLevel()
     {
         string currentSceneName = SceneManager.GetActiveScene().name;
-        
+
         // Извлекаем номер уровня из имени сцены (например, "Level_1" → 1)
         Match match = Regex.Match(currentSceneName, @"\d+");
         if (match.Success)
         {
             int currentLevel = int.Parse(match.Value);
             int nextLevel = currentLevel + 1;
-            
+
             string nextSceneName = $"Level_{nextLevel}";
 
             // Проверяем, существует ли такая сцена в билде
